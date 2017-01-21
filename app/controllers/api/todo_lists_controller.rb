@@ -29,13 +29,11 @@ class Api::TodoListsController < ApplicationController
   def update
     @todo_list = TodoList.find(params[:id])
     if @todo_list.update(list_params)
-      render json: {
-        "status": 200,
+      render "status": 200, json: {
         "message": "Successfully updated"
       }
     else
-      render json: {
-        "status": 500,
+      render "status": 422, json: {
         "errors": @todo_list.errors
       }.to_json
     end
