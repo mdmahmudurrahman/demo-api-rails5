@@ -1,4 +1,5 @@
 class Api::TodoListsController < ApplicationController
+  before_action :find_todo_list
 
   def index
     @todo_lists = TodoList.all
@@ -6,8 +7,7 @@ class Api::TodoListsController < ApplicationController
   end
 
   def show
-    @todo = TodoList.find(params[:id])
-    render json: @todo
+    render json: @todo_list.as_json(include: {todo_list_items: { only: :title}})
   end
 
   def create
@@ -27,7 +27,6 @@ class Api::TodoListsController < ApplicationController
   end
 
   def update
-    @todo_list = TodoList.find(params[:id])
     if @todo_list.update(list_params)
       render "status": 200, json: {
         "message": "Successfully updated"
@@ -39,7 +38,6 @@ class Api::TodoListsController < ApplicationController
     end
   end
   def destroy
-    @todo_list = TodoList.find(params[:id])
     if @todo_list.destroy
       render json: {
           "status": 200,
@@ -52,5 +50,9 @@ class Api::TodoListsController < ApplicationController
   private
   def list_params
     params.require(:todo_list).permit(:title, :content)
+  end
+
+  def find_todo_list
+    @todo_list = TodoList.find(params[:id])
   end
 end
